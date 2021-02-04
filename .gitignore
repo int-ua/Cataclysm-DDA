@@ -182,6 +182,7 @@ stage
 # Eclipse IDE
 .cproject
 .settings/
+.pydevproject
 
 # Apple Xcode IDE
 Xcode/

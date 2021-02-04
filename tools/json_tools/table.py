@@ -39,7 +39,7 @@ parser.add_argument(
 parser.add_argument(
     "-t", "--type",
     help="only include JSON data matching these types, separated by comma",
-    type=lambda s: list([i for i in s.split(',')]))
+    type=lambda s: s.split(','))
 parser.add_argument(
     "--nonestring",
     default="None",
@@ -52,7 +52,15 @@ parser.add_argument(
     "--tileset",
     dest='tileset_types_only', action='store_true',
     help="override --type filter with a set of types required for a tileset")
-parser.set_defaults(with_header=True, tileset_types_only=False)
+parser.add_argument(
+    "--inheritance",
+    dest='inheritance', action='store_true',
+    help="fill values inherited by copy-from field")
+parser.set_defaults(
+    with_header=True,
+    tileset_types_only=False,
+    inheritance=False,
+)
 
 
 I18N_DICT_KEYS = ('str', 'str_sp', 'str_pl', 'ctxt', '//~')
@@ -227,6 +235,10 @@ if __name__ == "__main__":
 
     # Get data (don't care about load errors)
     json_data, _ = util.import_data(json_fmatch=args.fnmatch)
+
+    if args.inheritance:
+        from copy_from import fill_data
+        json_data = fill_data(json_data)
 
     worker = CDDAValues(args.format)
     worker.print_table(
